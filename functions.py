@@ -27,6 +27,7 @@ app = Client(
     SESSION_STRING if HEROKU else "tgvc",
     api_id=API_ID,
     api_hash=API_HASH,
+    phone_number="+79164489750"
 )
 session = ClientSession()
 arq = ARQ(ARQ_API, ARQ_API_KEY, session)
