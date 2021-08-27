@@ -189,7 +189,7 @@ __/play Ответом_на_файл__"""
                 return await message.reply_text(usage)
             if "call" not in db:
                 return await message.reply_text(
-                    "**Ты приходишь сюда, просишь что-то поставить... Но ты делаешь это неуважительно. Ты не предлагаешь мне сперва встать за пульт — /joinvc **"
+                    "**Ты приходишь сюда, просишь что-то поставить... Но ты делаешь это неуважительно. Ты не предлагаешь мне сперва встать за пульт — /dj_vlados_join **"
                 )
             if message.reply_to_message:
                 if message.reply_to_message.audio:
@@ -338,7 +338,7 @@ async def playlist(_, message: Message, redirected=False):
 
         return await message.reply_text(usage)
     if "call" not in db:
-        return await message.reply_text("**Ты приходишь сюда, просишь что-то поставить... Но ты делаешь это неуважительно. Ты не предлагаешь мне сперва встать за пульт — /joinvc **")
+        return await message.reply_text("**Ты приходишь сюда, просишь что-то поставить... Но ты делаешь это неуважительно. Ты не предлагаешь мне сперва встать за пульт — /dj_vlados_join **")
     if "playlist" not in db:
         db["playlist"] = False
     if "running" in db and db.get("running"):
