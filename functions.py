@@ -203,7 +203,7 @@ async def generate_cover(
         await change_vc_title(title)
     except Exception:
         await send(
-            text="[ERROR]: FAILED TO EDIT VC TITLE, MAKE ME ADMIN."
+            text="[ERROR]: Я НЕ СМОГ ПОМЕНЯТЬ НАЗВАНИЕ ВОЙС ЧАТА, СДЕЛАЙ МЕНЯ АДМИНОМ БЛЯТЬ"
         )
         pass
     return final
@@ -262,20 +262,20 @@ async def get_song(query: str, service: str):
 
 async def play_song(requested_by, query, message, service):
     m = await message.reply_text(
-        f"__**Searching for {query} on {service}.**__", quote=False
+        f"__**Ищу {query} на {service}.**__", quote=False
     )
     # get song title, url etc
     song = await get_song(query, service)
     if not song:
-        return await m.edit("There's no such song on " + service)
+        return await m.edit("Чет нет такой песни на " + service)
 
     title, duration, thumbnail, artist, url = song
 
     if service == "youtube":
         if duration >= 1800:
-            return await m.edit("[ERROR]: SONG_TOO_BIG")
+            return await m.edit("[ERROR]: ДОХУЯ ДЛИННЫЙ ТРЕК УЕБОК")
 
-        await m.edit("__**Generating thumbnail.**__")
+        await m.edit("__**Делаю афишу...**__")
         cover = await generate_cover(
             requested_by,
             title,
@@ -283,19 +283,19 @@ async def play_song(requested_by, query, message, service):
             convert_seconds(duration),
             thumbnail,
         )
-        await m.edit("__**Downloading**__")
+        await m.edit("__**Качаю на флешку...**__")
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        await m.edit("__**Transcoding.**__")
+        await m.edit("__**Шаманю с кодеком...**__")
         song = "audio.webm"
         os.rename(audio_file, song)
         await run_async(transcode, song)
 
     else:
         await m.edit(
-            "__**Generating thumbnail, Downloading And Transcoding.**__"
+            "__**Ща сделаю красиво!**__"
         )
         cover, _ = await download_transcode_gencover(
             requested_by,
@@ -307,10 +307,10 @@ async def play_song(requested_by, query, message, service):
         )
     await m.delete()
     caption = f"""
-**Name:** {title[:45]}
-**Duration:** {convert_seconds(duration)}
-**Requested By:** {message.from_user.mention}
-**Platform:** {service}
+**Название:** {title[:45]}
+**Длительность:** {convert_seconds(duration)}
+**По заявке от:** {message.from_user.mention}
+**Платформа:** {service}
 """
     await m.delete()
     m = await message.reply_photo(
@@ -326,7 +326,7 @@ async def play_song(requested_by, query, message, service):
 
 
 async def telegram(message):
-    err = "__**Can't play that**__"
+    err = "__**Чет не могу это сыгратьt**__"
     reply = message.reply_to_message
     if not reply:
         return await message.reply_text(err)
@@ -335,12 +335,12 @@ async def telegram(message):
     if not reply.audio.duration:
         return await message.reply_text(err)
     if int(reply.audio.file_size) >= 104857600:
-        return await message.reply_text("[ERROR]: SONG_TOO_BIG")
-    m = await message.reply_text("__**Downloading.**__")
+        return await message.reply_text("[ERROR]: ТРЕК ДОХУЯ ДЛИННЫЙ")
+    m = await message.reply_text("__**Качаю...**__")
     song = await message.reply_to_message.download()
-    await m.edit("__**Transcoding.**__")
+    await m.edit("__**Шаманю с кодеком...**__")
     await run_async(transcode, song)
-    await m.edit(f"__**Playing {reply.link}**__", disable_web_page_preview=True)
+    await m.edit(f"__**Играю {reply.link}**__", disable_web_page_preview=True)
     await pause_skip_watcher(m, reply.audio.duration)
     if os.path.exists(song):
         os.remove(song)
